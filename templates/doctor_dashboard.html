@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - Smart Health</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 2rem;">
+                <h2 style="color: white; margin: 0;">⚕️ Smart Health</h2>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Doctor Portal</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="active"><span>📊</span> Dashboard</a>
+                <a href="#appointments"><span>📅</span> Appointments</a>
+                <a href="#prescriptions"><span>💊</span> Prescriptions</a>
+                <a href="#patients"><span>👥</span> Patients</a>
+                <div style="margin-top: auto; padding-top: 2rem;">
+                    <a href="{{ url_for('auth.logout') }}" style="color: var(--accent-red);"><span>🚪</span> Logout</a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h1 style="margin: 0; text-align: left;">Welcome, Dr. {{ current_user.name }}</h1>
+                    <p style="color: var(--text-muted);">Here is what's happening with your patients today.</p>
+                </div>
+                <div class="badge badge-success">Online</div>
+            </header>
+
+            <!-- Dashboard Summary -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="card" style="margin-bottom: 0;">
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Pending Appointments</p>
+                    <h2 style="margin: 0.5rem 0; text-align: left;">{{ appointments|selectattr('status', 'equalto', 'Pending')|list|length }}</h2>
+                </div>
+                <div class="card" style="margin-bottom: 0;">
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Total Approved</p>
+                    <h2 style="margin: 0.5rem 0; text-align: left;">{{ appointments|selectattr('status', 'equalto', 'Approved')|list|length }}</h2>
+                </div>
+            </div>
+
+            <!-- Appointments Section -->
+            <section id="appointments" class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0;">Incoming Appointment Requests</h3>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments if appt.status == 'Pending' %}
+                            <tr>
+                                <td style="font-weight: 500;">{{ appt.patient.name }} <span style="font-weight: 400; color: var(--text-muted);">({{ appt.patient.age }})</span></td>
+                                <td>{{ appt.appointment_date.strftime('%b %d, %H:%M') }}</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="{{ url_for('doctor.manage_appointment', appointment_id=appt.appointment_id, action='approve') }}" class="btn btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">Approve</a>
+                                        <a href="{{ url_for('doctor.manage_appointment', appointment_id=appt.appointment_id, action='reject') }}" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">Reject</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending appointment requests.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Patients & Prescriptions Section -->
+            <section id="patients" class="card">
+                <h3 style="margin-bottom: 1.5rem;">Patient Adherence & Prescriptions</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Visit Date</th>
+                                <th style="width: 200px;">Adherence Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments if appt.status == 'Approved' %}
+                            <tr>
+                                <td style="font-weight: 500;">{{ appt.patient.name }}</td>
+                                <td>{{ appt.appointment_date.strftime('%b %d, %Y') }}</td>
+                                <td>
+                                    {% set adherence = patient_adherence[appt.patient_id]|default(0) %}
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div class="progress-container" style="flex: 1; margin: 0;">
+                                            <div class="progress-bar" style="width: {{ adherence }}%; background: {% if adherence > 80 %}var(--accent-green){% elif adherence > 50 %}var(--accent-yellow){% else %}var(--accent-red){% endif %};"></div>
+                                        </div>
+                                        <span style="font-weight: 600; font-size: 0.875rem; width: 40px;">{{ adherence }}%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('doctor.prescribe', appointment_id=appt.appointment_id) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">Create Prescription</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No active approved appointments.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

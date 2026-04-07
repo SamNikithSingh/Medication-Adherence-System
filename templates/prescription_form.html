@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Prescription - Smart Health</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 2rem;">
+                <h2 style="color: white; margin: 0;">⚕️ Smart Health</h2>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Doctor Portal</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('doctor.dashboard') }}"><span>📊</span> Dashboard</a>
+                <a href="{{ url_for('doctor.dashboard') }}#appointments"><span>📅</span> Appointments</a>
+                <a href="{{ url_for('doctor.dashboard') }}#prescriptions" class="active"><span>💊</span> Prescriptions</a>
+                <a href="{{ url_for('doctor.dashboard') }}#patients"><span>👥</span> Patients</a>
+                <div style="margin-top: auto; padding-top: 2rem;">
+                    <a href="{{ url_for('auth.logout') }}" style="color: var(--accent-red);"><span>🚪</span> Logout</a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header style="margin-bottom: 2rem;">
+                <a href="{{ url_for('doctor.dashboard') }}" style="text-decoration: none; color: var(--text-muted); font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span>←</span> Back to Dashboard
+                </a>
+                <h1 style="text-align: left; margin: 0;">Create New Prescription</h1>
+                <p style="color: var(--text-muted);">Issuing prescription for patient: <strong>{{ appointment.patient.name }}</strong></p>
+            </header>
+
+            <div class="card" style="max-width: 900px;">
+                <form method="POST">
+                    <div id="medicines-container">
+                        <div class="card" style="background: var(--bg-light); border: 1px dashed var(--border); box-shadow: none;">
+                            <div class="grid" style="grid-template-columns: 2fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label>Medicine Name</label>
+                                    <input type="text" name="medicine_name" placeholder="Paracetamol" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Dosage (mg)</label>
+                                    <input type="number" name="dosage" placeholder="500" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Duration (days)</label>
+                                    <input type="number" name="duration" placeholder="7" required>
+                                </div>
+                            </div>
+
+                            <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label>Times Per Day</label>
+                                    <input type="number" name="times_per_day" value="1" min="1" max="4" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Time Slots (Select multiple)</label>
+                                    <input type="text" name="time_slots" placeholder="Morning, Afternoon, Night" required>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Comma separated values</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Food Timing</label>
+                                    <select name="food_timing">
+                                        <option value="After Food">After Food</option>
+                                        <option value="Before Food">Before Food</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                        <button type="button" class="btn" style="background: #e2e8f0; color: var(--text-dark);" onclick="alert('Multiple medicines feature coming soon!')">+ Add Another Medicine</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Finalize Prescription</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

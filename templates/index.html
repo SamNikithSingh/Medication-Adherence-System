@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Healthcare & Medication Adherence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card" style="max-width: 600px;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <span style="font-size: 3rem;">⚕️</span>
+                <h1>Smart Health</h1>
+                <p class="subtitle">Your partner in medication adherence and health management.</p>
+            </div>
+            
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card" style="text-align: center; border: 2px solid transparent; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">👨‍⚕️</div>
+                    <h3>Doctor Portal</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">Manage appointments and track patient adherence.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="{{ url_for('auth.doctor_login') }}" class="btn btn-primary">Login</a>
+                        <a href="{{ url_for('auth.doctor_register') }}" style="font-size: 0.875rem; color: var(--primary); text-decoration: none;">New Doctor? Register</a>
+                    </div>
+                </div>
+
+                <div class="card" style="text-align: center; border: 2px solid transparent; transition: 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤒</div>
+                    <h3>Patient Portal</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">Book appointments and track your daily medications.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="{{ url_for('auth.patient_login') }}" class="btn btn-primary">Login</a>
+                        <a href="{{ url_for('auth.patient_register') }}" style="font-size: 0.875rem; color: var(--primary); text-decoration: none;">New Patient? Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
